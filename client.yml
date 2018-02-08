@@ -1,0 +1,34 @@
+---
+- hosts: client
+  become_method: sudo
+  remote_user: root
+  tasks:
+  - name: template for sensu repo
+    template:
+      src: /root/client/sensu_repo.j2
+      dest: /etc/yum.repos.d/sensu.repo
+  - name: installing sensu
+    yum:
+      name: sensu
+      state: latest
+  - name: template for client config file
+    template:
+      src: /root/client/client_config.j2
+      dest: /etc/sensu/conf.d/client.json
+  - name: template for rabbitmq config file
+    template:
+      src: /root/client/rabbitmq_config.j2
+      dest: /etc/sensu/config.json
+  - name: installing sensu-plugins
+    shell: cd /opt/sensu/embedded/bin/
+    shell: sensu-install -p cpu-checks
+           sensu-install -p disk-checks
+           sensu-install -p memory-checks
+           sensu-install -p nginx
+           sensu-install -p process-checks
+           sensu-install -p load-checks
+           sensu-install -p vmstats
+  - name: starting sensu-client
+    service:
+      name: sensu-client
+      state: started

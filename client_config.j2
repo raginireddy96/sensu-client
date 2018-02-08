@@ -1,0 +1,18 @@
+{% for hosts in groups [ 'client' ] %}
+{
+         "client": {
+"name": "Sensu-client",
+           "address": "52.42.151.102",
+           "subscriptions": [ "linux" ],
+           "keepalive": {
+           "handler": "mailer",
+             "thresholds": {
+           "warning": 250,
+           "critical": 300
+             },
+             "refresh": 90
+           }
+         }
+}
+{% endfor %}
+
